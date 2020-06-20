@@ -43,7 +43,7 @@ def preprocess(input_dir,output_dir):
         dft = pd.read_json(path)
         dft = psf.position_and_Individual_stats(dft,colpla,colwep,colpos,maps,all_round_status)
         dft = psf.kills_smokes_molotovs(dft,colsmokes,colmolotov,colkills)
-        dft = psf.proximity_players(dft)
+        dft = psf.proximity_players(dft,colpr)
         dft = psf.pos_bs(dft,colbs,maps,colmapbs)
         dft.to_json(output_dir+"dataset_{:02}.json".format(i))
 
@@ -79,6 +79,9 @@ colmapbs = ['de_cache_A', 'de_dust2_A', 'de_inferno_A', 'de_mirage_A', \
 
 colbs = ['pos_bs_t1','pos_bs_t2','pos_bs_t3','pos_bs_t4','pos_bs_t5',\
         'pos_bs_ct1','pos_bs_ct2','pos_bs_ct3','pos_bs_ct4','pos_bs_ct5']
+
+
+colpr = ['pr_t1','pr_t2','pr_t3','pr_t4','pr_t5','pr_ct1','pr_ct2','pr_ct3','pr_ct4','pr_ct5']
 
 ###############################################################################
 

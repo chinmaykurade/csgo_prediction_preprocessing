@@ -22,6 +22,8 @@ def position_and_Individual_stats(dfpre,colpla,colwep,colpos,all_maps,all_round_
         ds['health_t']         = list(map(sum, pu.get_attr(ds, "Terrorist", "health")))
         ds['money_ct']         = list(map(sum, pu.get_attr(ds, "CT", "money")))
         ds['money_t']          = list(map(sum, pu.get_attr(ds, "Terrorist", "money")))
+        ds['armor_ct']         = list(map(sum, pu.get_attr(ds, "CT", "armor")))
+        ds['armor_t']          = list(map(sum, pu.get_attr(ds, "Terrorist", "armor")))
     
 #     dfwep_t = pd.DataFrame(np.zeros((len(dfpre),len(colwep)),dtype=int),columns=colwep)
 #     dfwep_ct = pd.DataFrame(np.zeros((len(dfpre),len(colwep)),dtype=int),columns=colwep)
@@ -210,10 +212,9 @@ def kills_smokes_molotovs(dfpre,colsmokes,colmolotovs,colkills):
     return pd.concat([dfpre,dfsmo,dfmol,dfkill],axis='columns')
 
 
-def proximity_players(df,radius=400):
+def proximity_players(df,colpr,radius=400):
     pr_t = [[],[],[],[],[]]
     pr_ct = [[],[],[],[],[]]
-    colpr = ['pr_t1','pr_t2','pr_t3','pr_t4','pr_t5','pr_ct1','pr_ct2','pr_ct3','pr_ct4','pr_ct5']
     dfpr = pd.DataFrame(index=df.index,columns=colpr)
     for i in tqdm(range(len(df))):
         dft = df.loc[i]
