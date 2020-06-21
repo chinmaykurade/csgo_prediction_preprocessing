@@ -23,10 +23,10 @@ def create_colkills(n):
     listkill = []
     for i in range(n):
         listkill.append('kill'+str(i+1)+'weapon')
-        listkill.append('kill'+str(i+1)+'attacker_side')
         listkill.append('kill'+str(i+1)+'attacker_position')
-        listkill.append('kill'+str(i+1)+'victim_side')
+        listkill.append('kill'+str(i+1)+'attacker_side')
         listkill.append('kill'+str(i+1)+'victim_position')
+        listkill.append('kill'+str(i+1)+'victim_side')
     return listkill
 
 ###############################################################################
@@ -36,6 +36,10 @@ GalilAr, M249, M4a4, Mac10, P90, Mp5sd, Ump45, Xm1014, Bizon, Mag7, Negev, \
 Sawedoff, Tec9, ZeusX27, P2000, Mp7, Mp9, Nova, P250, Scar20, Sg553, Ssg08, \
 M4a1S, UspS, Cz75Auto, R8Revolver, Flashbang, HeGrenade, SmokeGrenade, \
 MolotovGrenade, DecoyGrenade, IncendiaryGrenade, Knife, C4".split(', ')
+
+colhurt = colwep.copy()
+colhurt.append('Inferno')
+colhurt.append('World')
 
 colpla = create_colpla()
 

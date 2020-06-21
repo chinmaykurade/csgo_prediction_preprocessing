@@ -9,9 +9,6 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from itertools import repeat
-#from preprocess_utils import get_attr,find_in_inventory,binary_features,\
-#return_pos,weapon,attacker_side,attacker_position,victim_side,victim_position\
-#dist,radius_proximity,dist_pos
 import preprocess_utils as pu
 
 def position_and_Individual_stats(dfpre,colpla,colwep,colpos,all_maps,all_round_status):    
@@ -25,8 +22,6 @@ def position_and_Individual_stats(dfpre,colpla,colwep,colpos,all_maps,all_round_
         ds['armor_ct']         = list(map(sum, pu.get_attr(ds, "CT", "armor")))
         ds['armor_t']          = list(map(sum, pu.get_attr(ds, "Terrorist", "armor")))
     
-#     dfwep_t = pd.DataFrame(np.zeros((len(dfpre),len(colwep)),dtype=int),columns=colwep)
-#     dfwep_ct = pd.DataFrame(np.zeros((len(dfpre),len(colwep)),dtype=int),columns=colwep)
     dfwep_t = pd.DataFrame(index=dfpre.index,columns=colwep)
     dfwep_ct = pd.DataFrame(index=dfpre.index,columns=colwep)
         
@@ -186,20 +181,11 @@ def kills_smokes_molotovs(dfpre,colsmokes,colmolotovs,colkills):
     dfsmo = pd.DataFrame(index=dfpre.index,columns=colsmokes)
     dfmol = pd.DataFrame(index=dfpre.index,columns=colmolotovs)
     dfkill = pd.DataFrame(index=dfpre.index,columns=colkills)
-   
-#    smokes_1_list = list(map(pu.return_pos,dfpre['active_smokes'], repeat(0)))
-#    smokes_2_list = list(map(pu.return_pos,dfpre['active_smokes'], repeat(1)))
-#    dfsmo[colsmokes[0]] = smokes_1_list
-#    dfsmo[colsmokes[1]] = smokes_2_list
     
     for i in range(len(colsmokes)):
         smokes_list = list(map(pu.return_pos,dfpre['active_smokes'], repeat(i)))
         dfsmo[colsmokes[i]] = smokes_list
-    
-#    mols_1_list = list(map(pu.return_pos,dfpre['active_molotovs'], repeat(0)))
-#    mols_2_list = list(map(pu.return_pos,dfpre['active_molotovs'], repeat(1)))
-#    dfmol[colmolotov[0]] = mols_1_list
-#    dfmol[colmolotov[1]] = mols_2_list
+
     for i in range(len(colmolotovs)):
         molotovs_list = list(map(pu.return_pos,dfpre['active_molotovs'], repeat(i)))
         dfmol[colmolotovs[i]] = molotovs_list
@@ -208,11 +194,11 @@ def kills_smokes_molotovs(dfpre,colsmokes,colmolotovs,colkills):
         for j,func in enumerate(funclist):
             list1 = list(map(func,dfpre['previous_kills'], repeat(i)))
             dfkill[colkills[i*len(funclist)+j]] = list1
-#     return dfpre
+
     return pd.concat([dfpre,dfsmo,dfmol,dfkill],axis='columns')
 
 
-def proximity_players(df,colpr,radius=400):
+def proximity_players(df,colpr,radius=600):
     pr_t = [[],[],[],[],[]]
     pr_ct = [[],[],[],[],[]]
     dfpr = pd.DataFrame(index=df.index,columns=colpr)
@@ -221,9 +207,6 @@ def proximity_players(df,colpr,radius=400):
         for j in range(1,6):
             pr_t[j-1].append(pu.radius_proximity('t'+str(j),dft,radius = radius))
             pr_ct[j-1].append(pu.radius_proximity('ct'+str(j),dft,radius = radius))
-#             dfpr.loc[i,'pr_t'+str(j)] = radius_proximity('t'+str(j),df.loc[i],radius = 300)
-#             dfpr.loc[i,'pr_ct'+str(j)] = radius_proximity('ct'+str(j),df.loc[i],radius = 300)
-#             print(dfpr.loc[i,'pr_t'+str(j)],dfpr.loc[i,'pr_ct'+str(j)])
     for i in range(5):
         dfpr['pr_t'+str(i+1)] = pr_t[i]
         dfpr['pr_ct'+str(i+1)] = pr_ct[i]
@@ -258,7 +241,6 @@ def pos_bs(df,colbs,maps,colmapbs):
                 abs_ct[j-1].append(np.min([pu.dist_pos(posA,dft['pos_ct'+str(j)][0]),\
                                            pu.dist_pos(posB,dft['pos_ct'+str(j)][0])]))
             else:
-#                 dfbs.loc[i,'pos_bs_ct'+str(j)] = default
                 abs_ct[j-1].append(default)
     for j in range(1,6):
         dfbs['pos_bs_t'+str(j)] = abs_t[j-1]
@@ -266,3 +248,25 @@ def pos_bs(df,colbs,maps,colmapbs):
         
     df = pd.concat([df,dfbs],axis=1)
     return df
+
+def kill_features(df,colhurt):
+    colkft = ['kwt_'+col for col in colhurt]
+    colkfct = ['kwct_'+col for col in colhurt]
+    
+    colkf = colkft+colkfct
+    
+    dfkf = pd.DataFrame(data=np.zeros((len(df),len(colkf))),index=df.index,columns=colkf,dtype=int)
+    
+    for i in tqdm(range(len(df))):
+        dft = df.loc[i]
+        if(dft.previous_kills!=[]):
+            for kill in dft.previous_kills:
+                team = 'kwct_' if kill['victim_side']=='CT' else 'kwt_'
+                wep = team+kill['weapon']
+                dfkf.loc[i,wep]+=1
+    print(dfkf.columns)
+    df = pd.concat([df,dfkf],axis=1)
+    
+    return df
+        
+    
