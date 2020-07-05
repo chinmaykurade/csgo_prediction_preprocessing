@@ -9,9 +9,12 @@ import pandas as pd
 import numpy as np
 
 def get_attr(ds, team, attr=None):
-        team_players = map(lambda players: filter(lambda p: p["team"] == team, players), ds['alive_players'])
+        team_players = map(lambda players: filter(lambda p: p["team"] ==\
+                                                  team, players), \
+                           ds['alive_players'])
         if attr:
-            team_players = map(lambda players: map(lambda p: p[attr], players), team_players)
+            team_players = map(lambda players:map(lambda p: p[attr], players),\
+                               team_players)
     
         return list(map(lambda p: list(p), team_players))
 

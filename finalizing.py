@@ -35,14 +35,16 @@ def save_json(df,output,split=5000):
         left = left-split
 
 def read_all(template,start,end):
-    frames = [ pd.read_json(f).fillna(0) for f in [template.format(i) for i in range(start,end)] ]
+    frames = [ pd.read_json(f).fillna(0) for f in [template.format(i) \
+                                                   for i in range(start,end)]]
     X = pd.concat(frames, ignore_index = True,sort = True)
     return X
 ###############################################################################
 
 # Importing the dataset
 template = "datasets/dataset_cleaned/dataset_{:02}.json"
-df = read_all(template,0,18)
+num_datasets = len(os.listdir('datasets/dataset_cleaned/'))
+df = read_all(template,0,num_datasets)
 
 if 'index' in list(df.columns): df.drop(columns='index',inplace=True,axis=1) 
 
@@ -53,21 +55,31 @@ df = df.drop('round_winner',axis=1)
 ## Difference in current_score
 df['t_leads'] = df['current_score_t'] - df['current_score_ct']
 
-## Checking for multicolinearity
-dfcorr = df.corr()
+## Total defuse kits and helmets
+df['defuse_kit_ct'] = df['defuse_kit_ct1'] + df['defuse_kit_ct2'] + \
+    df['defuse_kit_ct3'] + df['defuse_kit_ct4'] + df['defuse_kit_ct5']
+    
+df['has_helmet_ct'] = df['has_helmet_ct1'] + df['has_helmet_ct2'] + \
+    df['has_helmet_ct3'] + df['has_helmet_ct4'] + df['has_helmet_ct5']
+    
+df['has_helmet_t'] = df['has_helmet_t1'] + df['has_helmet_t2'] + \
+    df['has_helmet_t3'] + df['has_helmet_t4'] + df['has_helmet_t5']
 
-for idx,col in enumerate(list(dfcorr.columns)):
-    for i in range(len(dfcorr[col])):
-        if(dfcorr[col][i] > 0.95 or dfcorr[col][i] < -0.95):
-            if(idx!=i):
-                print(col,dfcorr.index[i]," : {}".format(dfcorr[col][i]))
+## Checking for multicolinearity
+# dfcorr = df.corr()
+
+# for idx,col in enumerate(list(dfcorr.columns)):
+#     for i in range(len(dfcorr[col])):
+#         if(dfcorr[col][i] > 0.95 or dfcorr[col][i] < -0.95):
+#             if(idx!=i):
+#                 print(col,dfcorr.index[i]," : {}".format(dfcorr[col][i]))
 
 # We can see that alive_players_t,health_t and alive_players_ct and health_ct 
 # are highly correlated(correlation factor = 0.956)
-print(pd.pivot_table(df,index = 'alive_players_ct',values = 'health_ct'))
-print(pd.pivot_table(df,index = 'alive_players_t',values = 'health_t'))
+# print(pd.pivot_table(df,index = 'alive_players_ct',values = 'health_ct'))
+# print(pd.pivot_table(df,index = 'alive_players_t',values = 'health_t'))
 
-df.drop(columns = ['health_t','health_ct'],inplace=True,axis=1)
+# df.drop(columns = ['health_t','health_ct'],inplace=True,axis=1)
 
 # handle case when alive players for a team > 5
 idxs_t = df['alive_players_t'][np.array(list(df['alive_players_t'].\
@@ -85,7 +97,8 @@ colcon = ['armor_ct', 'armor_ct1', 'armor_ct2', 'armor_ct3', 'armor_ct4',\
            'armor_ct5', 'armor_t', 'armor_t1', 'armor_t2', 'armor_t3',\
            'armor_t4', 'armor_t5', 'health_ct1', 'health_ct2',\
            'health_ct3', 'health_ct4', 'health_ct5', 'health_t1',\
-           'health_t2', 'health_t3', 'health_t4', 'health_t5']
+           'health_t2', 'health_t3', 'health_t4', 'health_t5',\
+           'health_t','health_ct']
 
 colconq = ['money_ct','money_ct1', 'money_ct2', 'money_ct3', 'money_ct4', \
            'money_ct5','money_t', 'money_t1', 'money_t2', 'money_t3', \

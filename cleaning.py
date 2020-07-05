@@ -24,5 +24,6 @@ def clean(input_dir,output_dir):
         
 input_dir = "datasets/dataset_processed/"
 output_dir = "datasets/dataset_cleaned/"
-#os.mkdir(output_dir)
+if(not os.path.exists(output_dir)):
+    os.mkdir(output_dir)
 clean(input_dir,output_dir)

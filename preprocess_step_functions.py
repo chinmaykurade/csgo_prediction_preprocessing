@@ -11,16 +11,20 @@ from tqdm import tqdm
 from itertools import repeat
 import preprocess_utils as pu
 
-def position_and_Individual_stats(dfpre,colpla,colwep,colpos,all_maps,all_round_status):    
+def position_and_Individual_stats(dfpre,colpla,colwep,colpos,all_maps,\
+                                  all_round_status):    
     for ds in [dfpre]:
         ds['alive_players_t']  = list(map(len ,pu.get_attr(ds, "Terrorist")))
         ds['alive_players_ct'] = list(map(len, pu.get_attr(ds, "CT")))
         ds['health_ct']        = list(map(sum, pu.get_attr(ds, "CT", "health")))
-        ds['health_t']         = list(map(sum, pu.get_attr(ds, "Terrorist", "health")))
+        ds['health_t']         = list(map(sum, pu.get_attr(ds, "Terrorist", \
+                                                           "health")))
         ds['money_ct']         = list(map(sum, pu.get_attr(ds, "CT", "money")))
-        ds['money_t']          = list(map(sum, pu.get_attr(ds, "Terrorist", "money")))
+        ds['money_t']          = list(map(sum, pu.get_attr(ds, "Terrorist", \
+                                                           "money")))
         ds['armor_ct']         = list(map(sum, pu.get_attr(ds, "CT", "armor")))
-        ds['armor_t']          = list(map(sum, pu.get_attr(ds, "Terrorist", "armor")))
+        ds['armor_t']          = list(map(sum, pu.get_attr(ds, "Terrorist", \
+                                                           "armor")))
     
     dfwep_t = pd.DataFrame(index=dfpre.index,columns=colwep)
     dfwep_ct = pd.DataFrame(index=dfpre.index,columns=colwep)
@@ -42,6 +46,27 @@ def position_and_Individual_stats(dfpre,colpla,colwep,colpos,all_maps,all_round_
             drop=True
             prev_winner = dft['round_winner']
             prev_score = dft.current_score
+        elif(i==0 and dft['current_score'] != [0,0]):
+            prev_score = dft['current_score']
+            prev_winner = dft['round_winner']
+            dftn = dfpre.loc[1]
+            ni = 1
+            while(dftn.current_score==prev_score):
+                ni += 1
+                dftn = dfpre.loc[ni]
+            if(dftn['current_score'][0]==prev_score[0]):
+                change = 1
+                same = 0
+            else:
+                change = 0
+                same = 1
+            if(prev_winner == 'CT'):
+                curr_ct = prev_score[change]
+                curr_t = prev_score[same]
+            else:
+                curr_t = prev_score[change]
+                curr_ct = prev_score[same]
+            
         num_alive = len(dft['alive_players'])
         ctc = 1
         tc = 1
@@ -65,26 +90,38 @@ def position_and_Individual_stats(dfpre,colpla,colwep,colpos,all_maps,all_round_
                 porder = list(map(lambda player: player['team'],players[i]))
                 for j in range(10):
                     if(porder[j]=='CT'):
-                        dfpla.loc[i]['health_{}{}'.format('ct',ctc)] = players[i][j]['health']
+                        dfpla.loc[i]['health_{}{}'.format('ct',ctc)] =\
+                            players[i][j]['health']
                         if(len(players[i][j]['position_history'])):
-                            dfpos.loc[i]['pos_{}{}'.format('ct',ctc)] = [players[i][j]['position_history'][-1]]
-                        dfpla.loc[i]['money_{}{}'.format('ct',ctc)] = players[i][j]['money']
-                        dfpla.loc[i]['defuse_kit_{}{}'.format('ct',ctc)] = int(players[i][j]['has_defuser'])
-                        dfpla.loc[i]['armor_{}{}'.format('ct',ctc)] = players[i][j]['armor']
-                        dfpla.loc[i]['has_helmet_{}{}'.format('ct',ctc)] = int(players[i][j]['has_helmet'])
+                            dfpos.loc[i]['pos_{}{}'.format('ct',ctc)] = \
+                                [players[i][j]['position_history'][-1]]
+                        dfpla.loc[i]['money_{}{}'.format('ct',ctc)] = \
+                            players[i][j]['money']
+                        dfpla.loc[i]['defuse_kit_{}{}'.format('ct',ctc)] = \
+                            int(players[i][j]['has_defuser'])
+                        dfpla.loc[i]['armor_{}{}'.format('ct',ctc)] = \
+                            players[i][j]['armor']
+                        dfpla.loc[i]['has_helmet_{}{}'.format('ct',ctc)] = \
+                            int(players[i][j]['has_helmet'])
                         ctc = ctc+1
                     else:
-                        dfpla.loc[i]['health_{}{}'.format('t',tc)] = players[i][j]['health']
+                        dfpla.loc[i]['health_{}{}'.format('t',tc)] = \
+                            players[i][j]['health']
                         if(len(players[i][j]['position_history'])):
                             try:
-                                dfpos.loc[i]['pos_{}{}'.format('t',tc)] = [players[i][j]['position_history'][-1]]
+                                dfpos.loc[i]['pos_{}{}'.format('t',tc)] = \
+                                    [players[i][j]['position_history'][-1]]
                             except(IndexError):
                                 print([players[i][j]['position_history']])
-                        dfpla.loc[i]['money_{}{}'.format('t',tc)] = players[i][j]['money']
-                        dfpla.loc[i]['armor_{}{}'.format('t',tc)] = players[i][j]['armor']
-                        dfpla.loc[i]['has_helmet_{}{}'.format('t',tc)] = int(players[i][j]['has_helmet'])
+                        dfpla.loc[i]['money_{}{}'.format('t',tc)] =\
+                            players[i][j]['money']
+                        dfpla.loc[i]['armor_{}{}'.format('t',tc)] = \
+                            players[i][j]['armor']
+                        dfpla.loc[i]['has_helmet_{}{}'.format('t',tc)] = \
+                            int(players[i][j]['has_helmet'])
                         tc = tc+1
-                if(curr_t+curr_ct==15 and dfpre.loc[i].current_score != prev_score):
+                if(curr_t+curr_ct==15 and dfpre.loc[i].current_score != \
+                   prev_score):
                     curr_ct = curr_t+curr_ct
                     curr_t = curr_ct-curr_t
                     curr_ct = curr_ct-curr_t
@@ -113,21 +150,34 @@ def position_and_Individual_stats(dfpre,colpla,colwep,colpos,all_maps,all_round_
                             dft['alive_players'][k]['position_history'][0]):
                             players[i][j] = dft['alive_players'][k]
                             if(porder[j] == 'CT'):
-                                dfpla.loc[i]['health_{}{}'.format('ct',ctc)] = players[i][j]['health']
+                                dfpla.loc[i]['health_{}{}'.format('ct',ctc)] =\
+                                    players[i][j]['health']
                                 if(len(players[i][j]['position_history'])):
-                                    dfpos.loc[i]['pos_{}{}'.format('ct',ctc)] = [players[i][j]['position_history'][-1]]
-                                dfpla.loc[i]['money_{}{}'.format('ct',ctc)] = players[i][j]['money']
-                                dfpla.loc[i]['defuse_kit_{}{}'.format('ct',ctc)] = int(players[i][j]['has_defuser'])
-                                dfpla.loc[i]['armor_{}{}'.format('ct',ctc)] = players[i][j]['armor']
-                                dfpla.loc[i]['has_helmet_{}{}'.format('ct',ctc)] = int(players[i][j]['has_helmet'])
+                                    dfpos.loc[i]['pos_{}{}'.format('ct',ctc)]=\
+                                        [players[i][j]['position_history'][-1]]
+                                dfpla.loc[i]['money_{}{}'.format('ct',ctc)] =\
+                                    players[i][j]['money']
+                                dfpla.loc[i]['defuse_kit_{}{}'.format('ct',\
+                                                                      ctc)] = \
+                                    int(players[i][j]['has_defuser'])
+                                dfpla.loc[i]['armor_{}{}'.format('ct',ctc)] = \
+                                    players[i][j]['armor']
+                                dfpla.loc[i]['has_helmet_{}{}'.format('ct'\
+                                                                      ,ctc)]=\
+                                    int(players[i][j]['has_helmet'])
                                 ctc = ctc+1
                             else:
-                                dfpla.loc[i]['health_{}{}'.format('t',tc)] = players[i][j]['health']
+                                dfpla.loc[i]['health_{}{}'.format('t',tc)] = \
+                                    players[i][j]['health']
                                 if(len(players[i][j]['position_history'])):
-                                    dfpos.loc[i]['pos_{}{}'.format('t',tc)] = [players[i][j]['position_history'][-1]]
-                                dfpla.loc[i]['money_{}{}'.format('t',tc)] = players[i][j]['money']
-                                dfpla.loc[i]['armor_{}{}'.format('t',tc)] = players[i][j]['armor']
-                                dfpla.loc[i]['has_helmet_{}{}'.format('t',tc)] = int(players[i][j]['has_helmet'])
+                                    dfpos.loc[i]['pos_{}{}'.format('t',tc)] =\
+                                        [players[i][j]['position_history'][-1]]
+                                dfpla.loc[i]['money_{}{}'.format('t',tc)] = \
+                                    players[i][j]['money']
+                                dfpla.loc[i]['armor_{}{}'.format('t',tc)] = \
+                                    players[i][j]['armor']
+                                dfpla.loc[i]['has_helmet_{}{}'.format('t',tc)]\
+                                    = int(players[i][j]['has_helmet'])
                                 tc = tc+1
                                         
                     if(players[i][j]==None):
@@ -149,9 +199,15 @@ def position_and_Individual_stats(dfpre,colpla,colwep,colpos,all_maps,all_round_
         for player in players[i]:
             if(player!=None):
                 if(player['team']=='CT'):
-                    wlist_ct = wlist_ct+np.array(list(map(lambda s:1 if(pu.find_in_inventory(player,s)==True) else 0,colwep)))
+                    wlist_ct = \
+                        wlist_ct+np.array(list(map(lambda s:1 \
+                        if(pu.find_in_inventory(player,s)==True) else 0,\
+                            colwep)))
                 else:
-                    wlist_t = wlist_t+np.array(list(map(lambda s:1 if(pu.find_in_inventory(player,s)==True) else 0,colwep)))
+                    wlist_t = \
+                        wlist_t+np.array(list(map(lambda s:1 \
+                        if(pu.find_in_inventory(player,s)==True) else 0,\
+                            colwep)))
         dfwep_t.loc[i] = wlist_t
         dfwep_ct.loc[i] = wlist_ct
         curr_t_list.append(curr_t)
@@ -183,11 +239,13 @@ def kills_smokes_molotovs(dfpre,colsmokes,colmolotovs,colkills):
     dfkill = pd.DataFrame(index=dfpre.index,columns=colkills)
     
     for i in range(len(colsmokes)):
-        smokes_list = list(map(pu.return_pos,dfpre['active_smokes'], repeat(i)))
+        smokes_list = list(map(pu.return_pos,dfpre['active_smokes'], \
+                               repeat(i)))
         dfsmo[colsmokes[i]] = smokes_list
 
     for i in range(len(colmolotovs)):
-        molotovs_list = list(map(pu.return_pos,dfpre['active_molotovs'], repeat(i)))
+        molotovs_list = list(map(pu.return_pos,dfpre['active_molotovs'],\
+                                 repeat(i)))
         dfmol[colmolotovs[i]] = molotovs_list
         
     for i in range(int(len(colkills)/len(funclist))):
@@ -205,8 +263,10 @@ def proximity_players(df,colpr,radius=600):
     for i in tqdm(range(len(df))):
         dft = df.loc[i]
         for j in range(1,6):
-            pr_t[j-1].append(pu.radius_proximity('t'+str(j),dft,radius = radius))
-            pr_ct[j-1].append(pu.radius_proximity('ct'+str(j),dft,radius = radius))
+            pr_t[j-1].append(pu.radius_proximity('t'+str(j),\
+                                                 dft,radius = radius))
+            pr_ct[j-1].append(pu.radius_proximity('ct'+str(j),\
+                                                  dft,radius = radius))
     for i in range(5):
         dfpr['pr_t'+str(i+1)] = pr_t[i]
         dfpr['pr_ct'+str(i+1)] = pr_ct[i]
@@ -233,13 +293,17 @@ def pos_bs(df,colbs,maps,colmapbs):
         posB = mbs[mapp+'_B']
         for j in range(1,6):
             if(dft['pos_t'+str(j)]is not np.nan):
-                abs_t[j-1].append(np.min([pu.dist_pos(posA,dft['pos_t'+str(j)][0]),\
-                                pu.dist_pos(posB,dft['pos_t'+str(j)][0])]))
+                abs_t[j-1].append(np.min([pu.dist_pos(posA,\
+                                                    dft['pos_t'+str(j)][0]),\
+                                                    pu.dist_pos(posB,\
+                                                    dft['pos_t'+str(j)][0])]))
             else:
                 abs_t[j-1].append(default)
             if(df.loc[i,'pos_ct'+str(j)]is not np.nan):
-                abs_ct[j-1].append(np.min([pu.dist_pos(posA,dft['pos_ct'+str(j)][0]),\
-                                           pu.dist_pos(posB,dft['pos_ct'+str(j)][0])]))
+                abs_ct[j-1].append(np.min([pu.dist_pos(posA,\
+                                                    dft['pos_ct'+str(j)][0]),\
+                                                    pu.dist_pos(posB,\
+                                                    dft['pos_ct'+str(j)][0])]))
             else:
                 abs_ct[j-1].append(default)
     for j in range(1,6):
@@ -255,7 +319,8 @@ def kill_features(df,colhurt):
     
     colkf = colkft+colkfct
     
-    dfkf = pd.DataFrame(data=np.zeros((len(df),len(colkf))),index=df.index,columns=colkf,dtype=int)
+    dfkf = pd.DataFrame(data=np.zeros((len(df),len(colkf))),index=df.index,\
+                        columns=colkf,dtype=int)
     
     for i in tqdm(range(len(df))):
         dft = df.loc[i]
@@ -264,7 +329,6 @@ def kill_features(df,colhurt):
                 team = 'kwct_' if kill['victim_side']=='CT' else 'kwt_'
                 wep = team+kill['weapon']
                 dfkf.loc[i,wep]+=1
-    print(dfkf.columns)
     df = pd.concat([df,dfkf],axis=1)
     
     return df
