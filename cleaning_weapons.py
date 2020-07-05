@@ -29,7 +29,8 @@ def clean_weapons(df):
     
     main_items = list(set(main_items_t ) | set(main_items_ct ))
     
-    other_rifles = list(map(lambda x: x if x not in main_items else None,rifles))
+    other_rifles = list(map(lambda x: x if x not in main_items else None,\
+                            rifles))
     while None in other_rifles:
         other_rifles.remove(None)
     other_rifles
@@ -41,7 +42,8 @@ def clean_weapons(df):
     
     other_heavy = heavy
     
-    other_pistols = list(map(lambda x: x if x not in main_items else None,pistols))
+    other_pistols = list(map(lambda x: x if x not in main_items else None,\
+                             pistols))
     while None in other_pistols:
         other_pistols.remove(None)
     other_pistols
@@ -58,8 +60,8 @@ def clean_weapons(df):
     other_heavy_ct = [item+'_ct' for item in other_heavy]
     
     
-    drop_incmol = ['IncendiaryGrenade_t','MolotovGrenade_t','IncendiaryGrenade_ct'\
-                  ,'MolotovGrenade_ct']
+    drop_incmol = ['IncendiaryGrenade_t','MolotovGrenade_t',\
+                   'IncendiaryGrenade_ct','MolotovGrenade_ct']
     drop_cols = other_rifles_t+other_rifles_ct+other_smgs_t+other_smgs_ct\
     +other_pistols_t+other_pistols_ct+other_heavy_t+other_heavy_ct\
     +drop_incmol+colwep
@@ -73,12 +75,14 @@ def clean_weapons(df):
     df['other_heavy_ct'] = df.apply(lambda x:x[other_heavy_ct].sum(),axis=1)
     
     df['other_pistols_t'] = df.apply(lambda x:x[other_pistols_t].sum(),axis=1)
-    df['other_pistols_ct'] = df.apply(lambda x:x[other_pistols_ct].sum(),axis=1)
+    df['other_pistols_ct'] =df.apply(lambda x:x[other_pistols_ct].sum(),axis=1)
     
-    df['MolotovIncendiaryGrenade_t'] = df.apply(lambda x:x['IncendiaryGrenade_t']\
-      +x['MolotovGrenade_t'],axis=1)
-    df['MolotovIncendiaryGrenade_ct'] = df.apply(lambda x:x['IncendiaryGrenade_ct']\
-      +x['MolotovGrenade_ct'],axis=1)
+    df['MolotovIncendiaryGrenade_t'] = \
+        df.apply(lambda x:x['IncendiaryGrenade_t']+x['MolotovGrenade_t'],\
+                 axis=1)
+    df['MolotovIncendiaryGrenade_ct'] = \
+        df.apply(lambda x:x['IncendiaryGrenade_ct']+x['MolotovGrenade_ct'],\
+                 axis=1)
     
     
     df.drop(columns=drop_cols,inplace=True)
@@ -103,7 +107,8 @@ def clean_kill_weapons(df):
     
     main_items = list(set(main_items_t ) | set(main_items_ct ))
     
-    other_rifles = list(map(lambda x: x if x not in main_items else None,rifles))
+    other_rifles = list(map(lambda x: x if x not in main_items else None,\
+                            rifles))
     while None in other_rifles:
         other_rifles.remove(None)
     
@@ -119,7 +124,8 @@ def clean_kill_weapons(df):
     while None in other_utils:
         other_utils.remove(None)
     
-    other_pistols = list(map(lambda x: x if x not in main_items else None,pistols))
+    other_pistols = list(map(lambda x: x if x not in main_items else None,\
+                             pistols))
     while None in other_pistols:
         other_pistols.remove(None)
     
@@ -139,14 +145,14 @@ def clean_kill_weapons(df):
     other_utils_ct = ['kwct_'+item for item in other_utils]
     
     
-    drop_incmol = ['kwt_IncendiaryGrenade','kwt_MolotovGrenade','kwct_IncendiaryGrenade'\
-                  ,'kwct_MolotovGrenade']
+    drop_incmol = ['kwt_IncendiaryGrenade','kwt_MolotovGrenade',\
+                   'kwct_IncendiaryGrenade','kwct_MolotovGrenade']
     drop_cols = other_rifles_t+other_rifles_ct+other_smgs_t+other_smgs_ct\
     +other_pistols_t+other_pistols_ct+other_heavy_t+other_heavy_ct\
     +drop_incmol+other_world_t+other_world_ct+other_utils_t+other_utils_ct
     
     df['kwt_other_rifles'] = df.apply(lambda x:x[other_rifles_t].sum(),axis=1)
-    df['kwct_other_rifles'] = df.apply(lambda x:x[other_rifles_ct].sum(),axis=1)
+    df['kwct_other_rifles']= df.apply(lambda x:x[other_rifles_ct].sum(),axis=1)
     
     df['kwt_other_smgs'] = df.apply(lambda x:x[other_smgs_t].sum(),axis=1)
     df['kwct_other_smgs'] = df.apply(lambda x:x[other_smgs_ct].sum(),axis=1)
@@ -155,7 +161,8 @@ def clean_kill_weapons(df):
     df['kwct_other_heavy'] = df.apply(lambda x:x[other_heavy_ct].sum(),axis=1)
     
     df['kwt_other_pistols'] = df.apply(lambda x:x[other_pistols_t].sum(),axis=1)
-    df['kwct_other_pistols'] = df.apply(lambda x:x[other_pistols_ct].sum(),axis=1)
+    df['kwct_other_pistols'] = df.apply(lambda x:x[other_pistols_ct].sum(),\
+                                        axis=1)
     
     df['kwt_other_world'] = df.apply(lambda x:x[other_world_t].sum(),axis=1)
     df['kwct_other_world'] = df.apply(lambda x:x[other_world_ct].sum(),axis=1)
@@ -163,10 +170,12 @@ def clean_kill_weapons(df):
     df['kwt_other_utils'] = df.apply(lambda x:x[other_utils_t].sum(),axis=1)
     df['kwct_other_utils'] = df.apply(lambda x:x[other_utils_ct].sum(),axis=1)
     
-    df['kwt_MolotovIncendiaryGrenade'] = df.apply(lambda x:x['kwt_IncendiaryGrenade']\
-      +x['kwt_MolotovGrenade'],axis=1)
-    df['kwct_MolotovIncendiaryGrenade'] = df.apply(lambda x:x['kwct_IncendiaryGrenade']\
-      +x['kwct_MolotovGrenade'],axis=1)
+    df['kwt_MolotovIncendiaryGrenade'] = \
+        df.apply(lambda x:x['kwt_IncendiaryGrenade']+x['kwt_MolotovGrenade'],\
+                 axis=1)
+    df['kwct_MolotovIncendiaryGrenade'] = \
+       df.apply(lambda x:x['kwct_IncendiaryGrenade']+x['kwct_MolotovGrenade'],\
+                 axis=1)
     
     
     df.drop(columns=drop_cols,inplace=True)

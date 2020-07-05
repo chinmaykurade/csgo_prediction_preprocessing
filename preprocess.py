@@ -15,11 +15,12 @@ colsmokes,colmolotov,colmapbs,colbs,colpr,colhurt
 ##############################################################################
 
 def preprocess(input_dir,output_dir):
-    for i in range(1,len(os.listdir(input_dir))):
+    for i in range(len(os.listdir(input_dir))):
         path = input_dir+"dataset_{:02}.json".format(i)
         print("Processing : {}".format(path))
         dft = pd.read_json(path)
-        dft = psf.position_and_Individual_stats(dft,colpla,colwep,colpos,maps,all_round_status)
+        dft = psf.position_and_Individual_stats(dft,colpla,colwep,colpos,maps,\
+                                                all_round_status)
         dft = psf.kills_smokes_molotovs(dft,colsmokes,colmolotov,colkills)
         dft = psf.proximity_players(dft,colpr)
         dft = psf.pos_bs(dft,colbs,maps,colmapbs)
@@ -33,6 +34,8 @@ tic = time.time()
 input_dir = "datasets/dataset_initial/"
 #input_dir = "datasets/dataset_processed/"
 output_dir = "datasets/dataset_processed/"
+if(not os.path.exists(output_dir)):
+    os.mkdir(output_dir)
 preprocess(input_dir,output_dir)
 
 toc = time.time()

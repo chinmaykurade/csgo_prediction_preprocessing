@@ -16,20 +16,20 @@ def clean_rest(df):
             'molotov_1', 'molotov_2', 'molotov_3', 'molotov_4', 'molotov_5',\
             'kill1weapon', 'kill1attacker_side', 'kill1attacker_position',\
             'kill1victim_side', 'kill1victim_position', 'kill2weapon',\
-            'kill2attacker_side', 'kill2attacker_position', 'kill2victim_side',\
+            'kill2attacker_side','kill2attacker_position','kill2victim_side',\
             'kill2victim_position', 'kill3weapon', 'kill3attacker_side', \
-            'kill3attacker_position', 'kill3victim_side', 'kill3victim_position',\
-            'kill4weapon', 'kill4attacker_side', 'kill4attacker_position',\
+            'kill3attacker_position','kill3victim_side','kill3victim_position'\
+            ,'kill4weapon', 'kill4attacker_side', 'kill4attacker_position',\
             'kill4victim_side', 'kill4victim_position', 'kill5weapon',\
-            'kill5attacker_side', 'kill5attacker_position', 'kill5victim_side',\
+            'kill5attacker_side','kill5attacker_position','kill5victim_side',\
             'kill5victim_position', 'kill6weapon', 'kill6attacker_side',\
-            'kill6attacker_position', 'kill6victim_side', 'kill6victim_position',\
-            'kill7weapon', 'kill7attacker_side', 'kill7attacker_position',\
+            'kill6attacker_position','kill6victim_side','kill6victim_position'\
+            ,'kill7weapon', 'kill7attacker_side', 'kill7attacker_position',\
             'kill7victim_side', 'kill7victim_position', 'kill8weapon',\
-            'kill8attacker_side', 'kill8attacker_position', 'kill8victim_side',\
+            'kill8attacker_side','kill8attacker_position','kill8victim_side',\
             'kill8victim_position', 'kill9weapon', 'kill9attacker_side',\
-            'kill9attacker_position', 'kill9victim_side', 'kill9victim_position',\
-            'kill10weapon', 'kill10attacker_side', 'kill10attacker_position',\
+            'kill9attacker_position','kill9victim_side','kill9victim_position'\
+            ,'kill10weapon','kill10attacker_side','kill10attacker_position',\
             'kill10victim_side', 'kill10victim_position']
     df.drop(columns=dropcols,inplace=True)
     

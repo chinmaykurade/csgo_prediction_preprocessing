@@ -67,6 +67,7 @@ colbs = ['pos_bs_t1','pos_bs_t2','pos_bs_t3','pos_bs_t4','pos_bs_t5',\
         'pos_bs_ct1','pos_bs_ct2','pos_bs_ct3','pos_bs_ct4','pos_bs_ct5']
 
 
-colpr = ['pr_t1','pr_t2','pr_t3','pr_t4','pr_t5','pr_ct1','pr_ct2','pr_ct3','pr_ct4','pr_ct5']
+colpr = ['pr_t1','pr_t2','pr_t3','pr_t4','pr_t5','pr_ct1','pr_ct2','pr_ct3',\
+         'pr_ct4','pr_ct5']
 
 ###############################################################################
