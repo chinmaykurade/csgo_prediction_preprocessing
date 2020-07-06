@@ -10,4 +10,6 @@ Link for dataset: https://github.com/Skybox-Technologies/csgo-ai-competition
 
 #### 2. Run 'cleaning.py'. This program filters the useful data eliminating the useless feeatures.
 
-#### 3. Run 'finalizing.py'. This adds some new features and finalizes data for training. The final dataset is in 'datasets/dataset_finalized' folder.
+#### 3. Run 'finalizing.py'. This adds some new features and finalizes data for training. 
+
+#### The final dataset is in 'datasets/dataset_finalized' folder.
