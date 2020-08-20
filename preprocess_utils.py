@@ -9,14 +9,25 @@ import pandas as pd
 import numpy as np
 
 def get_attr(ds, team, attr=None):
-        team_players = map(lambda players: filter(lambda p: p["team"] ==\
-                                                  team, players), \
-                           ds['alive_players'])
-        if attr:
-            team_players = map(lambda players:map(lambda p: p[attr], players),\
-                               team_players)
-    
-        return list(map(lambda p: list(p), team_players))
+    team_players = map(lambda players: filter(lambda p: p["team"] ==\
+                                              team, players), \
+                       ds['alive_players'])
+    if attr:
+        team_players = map(lambda players:map(lambda p: p[attr], players),\
+                           team_players)
+
+        tlist =  list(map(lambda p: list(p), team_players))
+        # print(len(tlist))
+        list(map(lambda x:x.append(0) if len(x)<5 else x,tlist))
+        list(map(lambda x:x.append(0) if len(x)<5 else x,tlist))
+        list(map(lambda x:x.append(0) if len(x)<5 else x,tlist))
+        list(map(lambda x:x.append(0) if len(x)<5 else x,tlist))
+        list(map(lambda x:x.append(0) if len(x)<5 else x,tlist))
+        newlist = list(map(lambda x:x[0:5],tlist))
+        return newlist
+    tlist =  list(map(lambda p: list(p), team_players))
+    return tlist
+        
 
 def find_in_inventory(player,item):
     for obj in player['inventory']:
@@ -70,9 +81,9 @@ def dist(player1,player2,df):
     if(df['pos_'+player2] is np.nan):
         d = 5000
     else:
-        d = ((df['pos_'+player1][0]['x']-df['pos_'+player2][0]['x'])**2 + \
-             (df['pos_'+player1][0]['y']-df['pos_'+player2][0]['y'])**2 + \
-             (df['pos_'+player1][0]['z']-df['pos_'+player2][0]['z'])**2)**(0.5)
+        d = ((df['pos_'+player1]['x']-df['pos_'+player2]['x'])**2 + \
+             (df['pos_'+player1]['y']-df['pos_'+player2]['y'])**2 + \
+             (df['pos_'+player1]['z']-df['pos_'+player2]['z'])**2)**(0.5)
     d = np.min([param,d])
     return d  
 
@@ -88,6 +99,8 @@ def radius_proximity(player,df,radius=700):
     return prox
 
 def dist_pos(pos1,pos2):
+    if(pos1 is np.nan or pos2 is np.nan):
+        return 5000
     xd = pos1['x']-pos2['x']
     yd = pos1['y']-pos2['y']
     zd = pos1['z']-pos2['z']
